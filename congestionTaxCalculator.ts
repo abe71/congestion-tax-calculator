@@ -9,8 +9,10 @@ enum TollFreeVehicles {
 	Military
   }
 
-function getTax(vehicle: Vehicle, dates: Date[]): number {
-    let intervalStart: Date = dates[0];
+export function getTax(vehicle: Vehicle, datesIn: Date[]): number {
+    const maxFee = 60;
+    const dates = datesIn.sort();
+    let intervalStart: Date = dates[0]; // TODO find first toll time in array
     let totalFee: number = 0;
 
     for (let i = 0; i < dates.length; i++) {
@@ -29,11 +31,12 @@ function getTax(vehicle: Vehicle, dates: Date[]): number {
             totalFee += nextFee;
         }
 
-        if (totalFee > 60) totalFee = 60;
-        return totalFee;
+        if (totalFee > maxFee) { 
+            return maxFee;
+        }
     }
 
-    return 0;
+    return totalFee;
 }
 
 function isTollFreeVehicle(vehicle: Vehicle): boolean {
@@ -69,16 +72,17 @@ function getTollFee(date: Date, vechicle: Vehicle): number {
 export function isTollFreeDate(date: Date): boolean {
     const year:number = date.getFullYear();
     const month:number = date.getMonth() + 1;
-    const day:number = date.getDay() + 1;
+    const day:number = date.getDay();
     const dayOfMonth:number = date.getDate();
 
     if (day == 6 || day == 0) return true;
 
     if (year == 2013)
         {
+            // TODO verify that day before bank holliday is also free of charge or is Sunday or Saturday
             if ((month == 1 && dayOfMonth == 1) ||
                     (month == 3 && (dayOfMonth == 28 || dayOfMonth == 29)) ||
-                    (month == 4 && (dayOfMonth == 1 || dayOfMonth == 30)) ||
+                    (month == 4 && (dayOfMonth == 1 || dayOfMonth == 30)) || 
                     (month == 5 && (dayOfMonth == 1 || dayOfMonth == 8 || dayOfMonth == 9)) ||
                     (month == 6 && (dayOfMonth == 5 || dayOfMonth == 6 || dayOfMonth == 21)) ||
                     (month == 7) ||
